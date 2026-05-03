@@ -25,33 +25,89 @@ local MAX_FOV = 70          -- Might be worth tweaking this further
 local PITCH_SPEED = 0.07    -- >0 faster, <0 slower, 0 default. Range: -1.5 to 0.49
 local PITCH_POWER = math_max(0.01, 0.5 - PITCH_SPEED)
 
-local RESET_BIND = GLOBAL.MOUSEBUTTON_MIDDLE
-
 if GLOBAL.PLAYER_CAMERA_MAX_DIST ~= nil then GLOBAL.PLAYER_CAMERA_MAX_DIST = MAX_DIST end
 if GLOBAL.PLAYER_CAMERA_MAX_DIST_CAVES ~= nil then GLOBAL.PLAYER_CAMERA_MAX_DIST_CAVES = MAX_DIST end
 
+local PERSIST_KEY = modname .. "_user_prefs"
+
+local ControlsConfig = {
+    reset_bind = GLOBAL.MOUSEBUTTON_MIDDLE,
+    reset_is_mouse = true,
+}
+
+local function IsHUDActive()
+    if not GLOBAL.ThePlayer then return false end
+    local screen = GLOBAL.TheFrontEnd and GLOBAL.TheFrontEnd:GetActiveScreen()
+    return screen and screen.name == "HUD"
+end
+
+local function SaveControlsConfig()
+    local str = GLOBAL.json.encode(ControlsConfig)
+    GLOBAL.TheSim:SetPersistentString(PERSIST_KEY, str, false)
+end
+
+GLOBAL.TheSim:GetPersistentString(PERSIST_KEY, function(load_success, str)
+    if load_success and str then
+        local success, data = GLOBAL.pcall(GLOBAL.json.decode, str)
+        if success and GLOBAL.type(data) == "table" then
+            for k, v in pairs(data) do
+                ControlsConfig[k] = v
+            end
+        end
+    end
+end)
+
+local function OpenSettingsMenu()
+    if IsHUDActive() then
+        local ZoomSettingsScreen = require("screens/zoomsettingsscreen")
+        GLOBAL.TheFrontEnd:PushScreen(ZoomSettingsScreen(
+            ControlsConfig.reset_bind, 
+            ControlsConfig.reset_is_mouse, 
+            function(new_bind, is_mouse)
+                ControlsConfig.reset_bind = new_bind
+                ControlsConfig.reset_is_mouse = is_mouse
+                SaveControlsConfig()
+            end
+        ))
+    end
+end
+
+local function ResetCamera()
+    if IsHUDActive() then
+        if GLOBAL.TheCamera then
+            local is_cave = GLOBAL.TheWorld ~= nil and GLOBAL.TheWorld:HasTag("cave")
+            GLOBAL.TheCamera.distancetarget = is_cave and RESET_DIST_CAVE or RESET_DIST
+        end
+    end
+end
+
+GLOBAL.TheInput:AddKeyDownHandler(GLOBAL.KEY_X, function()
+    local ctrl_down = GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_CTRL) or 
+                      GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_LCTRL) or 
+                      GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_RCTRL)
+    
+    if ctrl_down and IsHUDActive() then
+        OpenSettingsMenu()
+    end
+end)
+
+GLOBAL.TheInput:AddKeyHandler(function(key, down)
+    if not down or ControlsConfig.reset_is_mouse then return end
+    if key == ControlsConfig.reset_bind then ResetCamera() end
+end)
+
+GLOBAL.TheInput:AddMouseButtonHandler(function(button, down)
+    if not down or not ControlsConfig.reset_is_mouse then return end
+    if button == ControlsConfig.reset_bind then ResetCamera() end
+end)
+
 local function IsWX()
-    -- WX-78 Zaptrocuter Fix..
+    -- WX-78 Zaptrocuter HARDFix..
     if GLOBAL.ThePlayer and GLOBAL.ThePlayer.prefab == "wx78" then return true end
     return false
 end
 
-local function ResetCamera()
-    if GLOBAL.TheCamera and GLOBAL.TheFrontEnd:GetActiveScreen() and GLOBAL.TheFrontEnd:GetActiveScreen().name == "HUD" then
-        local is_cave = GLOBAL.TheWorld ~= nil and GLOBAL.TheWorld:HasTag("cave")
-        GLOBAL.TheCamera.distancetarget = is_cave and RESET_DIST_CAVE or RESET_DIST
-    end
-end
-
-if RESET_BIND then
-    TheInput:AddMouseButtonHandler(function(button, down)
-        if button == RESET_BIND and down then
-            ResetCamera()
-        end
-    end)
-end
-
-local function updateZoom(inst)
+local function UpdateZoom(inst)
     inst.SetDefaultOriginal = inst.SetDefault
     inst.SetDefault = function(self, ...)
         self:SetDefaultOriginal(...)
@@ -102,7 +158,7 @@ local function updateZoom(inst)
     end
 end
 
-AddGlobalClassPostConstruct("cameras/followcamera", "FollowCamera", updateZoom)
+AddGlobalClassPostConstruct("cameras/followcamera", "FollowCamera", UpdateZoom)
 
 if not CLOUDS_ENABLED then
     AddClassPostConstruct("screens/playerhud", function(self)
