@@ -81,7 +81,7 @@ local function ResetCamera()
     end
 end
 
-GLOBAL.TheInput:AddKeyDownHandler(GLOBAL.KEY_X, function()
+GLOBAL.TheInput:AddKeyDownHandler(GLOBAL.KEY_Z, function()
     local ctrl_down = GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_CTRL) or 
                       GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_LCTRL) or 
                       GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_RCTRL)
