@@ -1,7 +1,13 @@
 name = "Zoom+ (Fix)"
-description = "Changes the world zoom limits.\nSettings available in the mod menu.\n\nControls:\n· Middle Mouse — Reset zoom\n· Scroll — Zoom in/out\n· Ctrl+Z — Configure camera and keys"
+description = [[Expands the limits for zooming in and out.
+Settings are available in the mod menu, with additional options in-game.
+
+Controls:
+* Middle Mouse — Quick zoom reset
+* Scroll — Zoom in/out
+* Ctrl+Z — Configure camera and keys]]
 author = "Karasik"
-version = "1.5.0"
+version = "1.6.0"
 api_version = 10
 forumthread = "" -- only steam
 
