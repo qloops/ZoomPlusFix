@@ -387,7 +387,7 @@ function ZoomSettingsScreen:UpdateButtonText()
         self.bind_btn:SetText("< Press Key >")
         self.bind_btn:SetTextColour(LAYOUT.ERR_R, LAYOUT.ERR_G, LAYOUT.ERR_B, LAYOUT.ERR_A)
     else
-        self.bind_btn:SetText("[ " .. GetKeyName(self.app_config.reset_bind) .. " ]")
+        self.bind_btn:SetText("> " .. GetKeyName(self.app_config.reset_bind) .. " <")
         self.bind_btn:SetTextColour(LAYOUT.TXT_R, LAYOUT.TXT_G, LAYOUT.TXT_B, LAYOUT.TXT_A)
     end
 end
