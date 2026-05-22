@@ -12,6 +12,32 @@ function CameraController.Initialize(config_state, game_env)
     GameEnv = game_env
 end
 
+function CameraController.HookFocalPoint(inst)
+    --[[
+        The only reason we use this is that overriding the FOV 
+        affected WX-78's Zaptrocuter drone camera, making it extremely zoomed in.
+    ]]
+    
+    local focal_comp = inst.components.focalpoint
+    if not focal_comp then return end
+
+    local original_StartFocus = focal_comp.StartFocusSource
+    focal_comp.StartFocusSource = function(self, source, id, ...)
+        if GameEnv.TheCamera then GameEnv.TheCamera.is_focus_locked = true end
+        return original_StartFocus(self, source, id, ...)
+    end
+
+    local original_StopFocus = focal_comp.StopFocusSource
+    focal_comp.StopFocusSource = function(self, source, id, ...)
+        local result = original_StopFocus(self, source, id, ...)
+        if GameEnv.TheCamera then
+            local has_active_focus = self.focussources ~= nil and next(self.focussources) ~= nil
+            GameEnv.TheCamera.is_focus_locked = has_active_focus
+        end
+        return result
+    end
+end
+
 function CameraController.ApplyCameraConfig()
     if not GameEnv.TheCamera then return end
 
@@ -45,15 +71,11 @@ function CameraController.ResetCamera()
     GameEnv.TheCamera.distancetarget = is_cave and cached_constants.RESET_DIST_CAVE or cached_constants.RESET_DIST_SURFACE
 end
 
-local function IsWX()
-    return GameEnv.ThePlayer and GameEnv.ThePlayer.prefab == "wx78" or false
-end
-
 function CameraController.HookCamera(inst)
     inst.SetDefaultOriginal = inst.SetDefault
     inst.SetDefault = function(self, ...)
         self:SetDefaultOriginal(...)
-        self.is_wx = IsWX()
+        self.is_focus_locked = false
         CameraController.ApplyCameraConfig()
     end
 
@@ -76,11 +98,13 @@ function CameraController.HookCamera(inst)
     inst.ApplyOriginal = inst.Apply
     inst.Apply = function(self)
         if self.dist_range and self.dist_range > 0 then
+            local allow_custom_fov = not self.is_focus_locked 
+
             self.pitch, self.fov = CameraMath.CalculateCameraValues(
                 self.distance, self.mindist, self.dist_range, 
                 self.pitch_power, self.mindistpitch, self.pitch_range, 
                 self.default_fov, self.fov_range, 
-                self.is_wx, self.fov
+                allow_custom_fov, self.fov
             )
         end
         self:ApplyOriginal()

@@ -40,6 +40,10 @@ local function OpenSettingsMenu()
     ))
 end
 
+AddPrefabPostInit("focalpoint", function(inst)
+    CameraController.HookFocalPoint(inst)
+end)
+
 AddGlobalClassPostConstruct("cameras/followcamera", "FollowCamera", function(inst)
     CameraController.HookCamera(inst)
 end)
