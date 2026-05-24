@@ -14,7 +14,7 @@ function CameraMath.CalculateCameraValues(
     
     local new_pitch = mindistpitch + pitch_range * curved_percent_d
     local new_fov = allow_custom_fov 
-        and (default_fov + (fov_range or 0) * percent_d) 
+        and (default_fov + fov_range * percent_d) 
         or current_fov
 
     return new_pitch, new_fov

@@ -1,3 +1,5 @@
+local _G = GLOBAL
+
 local ConfigState = require("core/configstate")
 local ConfigIO = require("wrappers/configio")
 local CameraController = require("controllers/cameracontroller")
@@ -7,16 +9,16 @@ local PERSIST_KEY = modname .. "_user_prefs"
 
 ConfigState.UpdateSetting("zoom_sensitivity", GetModConfigData("zoom_sensitivity"))
 
-ConfigIO.Initialize(GLOBAL)
-CameraController.Initialize(ConfigState, GLOBAL)
+ConfigIO.Initialize(_G)
+CameraController.Initialize(ConfigState, _G)
 
 ConfigIO.Load(PERSIST_KEY, ConfigState, function()
     CameraController.ApplyCameraConfig()
 end)
 
 local function IsHUDActive()
-    if not GLOBAL.ThePlayer then return false end
-    local screen = GLOBAL.TheFrontEnd and GLOBAL.TheFrontEnd:GetActiveScreen()
+    if not _G.ThePlayer then return false end
+    local screen = _G.TheFrontEnd and _G.TheFrontEnd:GetActiveScreen()
     return screen and screen.name == "HUD"
 end
 
@@ -25,7 +27,7 @@ local function OpenSettingsMenu()
     
     local ZoomSettingsScreen = require("screens/zoomsettingsscreen")
     
-    GLOBAL.TheFrontEnd:PushScreen(ZoomSettingsScreen(
+    _G.TheFrontEnd:PushScreen(ZoomSettingsScreen(
         ConfigState.Settings, 
         ConfigState.DefaultSettings,
         function(key, value, is_mouse)
@@ -48,24 +50,24 @@ AddGlobalClassPostConstruct("cameras/followcamera", "FollowCamera", function(ins
     CameraController.HookCamera(inst)
 end)
 
-GLOBAL.TheInput:AddKeyDownHandler(GLOBAL.KEY_Z, function()
-    local ctrl_down = GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_CTRL) or
-                      GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_LCTRL) or
-                      GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_RCTRL)
+_G.TheInput:AddKeyDownHandler(_G.KEY_Z, function()
+    local ctrl_down = _G.TheInput:IsKeyDown(_G.KEY_CTRL) or
+                      _G.TheInput:IsKeyDown(_G.KEY_LCTRL) or
+                      _G.TheInput:IsKeyDown(_G.KEY_RCTRL)
 
     if ctrl_down and IsHUDActive() then
         OpenSettingsMenu()
     end
 end)
 
-GLOBAL.TheInput:AddKeyHandler(function(key, down)
+_G.TheInput:AddKeyHandler(function(key, down)
     if not down or ConfigState.Settings.reset_is_mouse then return end
     if key == ConfigState.Settings.reset_bind and IsHUDActive() then
         CameraController.ResetCamera()
     end
 end)
 
-GLOBAL.TheInput:AddMouseButtonHandler(function(button, down)
+_G.TheInput:AddMouseButtonHandler(function(button, down)
     if not down or not ConfigState.Settings.reset_is_mouse then return end
     if button == ConfigState.Settings.reset_bind and IsHUDActive() then
         CameraController.ResetCamera()

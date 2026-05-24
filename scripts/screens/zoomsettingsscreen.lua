@@ -43,12 +43,12 @@ local LAYOUT = {
     HOLD_DELAY = 0.4,
     REPEAT_RATE = 0.02,
 
-    PHASE_1_TIME = 0.7,
+    PHASE_1_TIME = 0.5,
     PHASE_1_MULT = 2,
     PHASE_2_TIME = 2.0,
-    PHASE_2_MULT = 7,
+    PHASE_2_MULT = 8,
     PHASE_3_TIME = 4.0,
-    PHASE_3_MULT = 15,
+    PHASE_3_MULT = 16,
 
     CENTER_MULT = 0.5,
     MATH_ROUND_HALF = 0.5,
