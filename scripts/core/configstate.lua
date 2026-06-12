@@ -18,7 +18,7 @@ ConfigState.DefaultSettings = {
     max_pitch = 85,
     default_fov = 35,
     max_fov = 70,
-    pitch_speed = 0.07,
+    pitch_speed = 0.00,
     zoom_sensitivity = 4,
 }
 

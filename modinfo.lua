@@ -1,4 +1,4 @@
-name = "Zoom+ (Fix)"
+name = "Zoom+"
 description = [[Expands the limits for zooming in and out.
 Settings are available in the mod menu, with additional options in-game.
 
@@ -7,7 +7,7 @@ Controls:
 * Scroll — Zoom in/out
 * Ctrl+Z — Configure camera and keys]]
 author = "Karasik"
-version = "1.8.0.dev"
+version = "1.8.0"
 api_version = 10
 forumthread = "" -- only steam
 
@@ -54,5 +54,17 @@ configuration_options =
             {description = "10", data = 10},
         },
         default = 4,
+    },
+    {
+        name = "settings_bind",
+        label = "Settings Hotkey",
+        hover = "Shortcut to open the Zoom+ configuration settings",
+        options = {
+            {description = "Ctrl+Z", data = "ctrl_z"},
+            {description = "Shift+Z", data = "shift_z"},
+            {description = "Alt+Z", data = "alt_z"},
+            {description = "F10", data = "f10"},
+        },
+        default = "ctrl_z",
     },
 }

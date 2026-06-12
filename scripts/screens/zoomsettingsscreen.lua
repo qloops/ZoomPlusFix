@@ -223,7 +223,7 @@ local ZoomSettingsScreen = Class(Screen, function(self, app_config, default_conf
     self.controls = {}
 
     self.config_schema = {
-        { id = "reset_bind", label = "Reset Zoom Key", type = "BIND" },
+        { id = "reset_bind", label = "Reset Zoom Hotkey", type = "BIND" },
         { id = "max_dist", label = "Max Distance", type = "STEPPER", step = 1, decimals = 0 },
         { id = "min_dist", label = "Min Distance", type = "STEPPER", step = 1, decimals = 0 },
         { id = "max_pitch", label = "Max Pitch", type = "STEPPER", step = 1, decimals = 0 },
