@@ -7,7 +7,7 @@ Controls:
 * Scroll — Zoom in/out
 * Ctrl+Z — Configure camera and keys]]
 author = "Karasik"
-version = "1.8.0"
+version = "1.8.5"
 api_version = 10
 forumthread = "" -- only steam
 
