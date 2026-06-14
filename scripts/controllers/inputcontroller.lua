@@ -7,13 +7,17 @@ local GameEnv = nil
 local active_settings_bind = nil
 local on_settings_saved_cb = nil
 
-function InputController.Initialize(
-    config_state, 
-    camera_controller, 
-    game_env, 
-    settings_bind, 
-    on_saved_callback
-)
+local function SafeMods(...)
+    local valid_mods = {}
+    for _, key_val in ipairs({...}) do
+        if key_val ~= nil then
+            table.insert(valid_mods, key_val)
+        end
+    end
+    return valid_mods
+end
+
+function InputController.Initialize(config_state, camera_controller, game_env, settings_bind, on_saved_callback)
     cached_config = config_state.Settings
     cached_defaults = config_state.DefaultSettings
     CamController = camera_controller
@@ -21,13 +25,26 @@ function InputController.Initialize(
     on_settings_saved_cb = on_saved_callback
 
     local SETTINGS_MENU_BINDS = {
-        ctrl_z = { key = GameEnv.KEY_Z,   mods = { GameEnv.KEY_CTRL,  GameEnv.KEY_LCTRL,  GameEnv.KEY_RCTRL } },
-        shift_z = { key = GameEnv.KEY_Z,   mods = { GameEnv.KEY_SHIFT, GameEnv.KEY_LSHIFT, GameEnv.KEY_RSHIFT } },
-        alt_z = { key = GameEnv.KEY_Z,   mods = { GameEnv.KEY_ALT,   GameEnv.KEY_LALT,   GameEnv.KEY_RALT } },
-        f10 = { key = GameEnv.KEY_F10, mods = {} },
+        ctrl_z  = { 
+            key = GameEnv.KEY_Z,   
+            mods = SafeMods(GameEnv.KEY_CTRL, GameEnv.KEY_LCTRL, GameEnv.KEY_RCTRL, GameEnv.KEY_LSUPER, GameEnv.KEY_RSUPER) 
+        },
+        shift_z = { 
+            key = GameEnv.KEY_Z,   
+            mods = SafeMods(GameEnv.KEY_SHIFT, GameEnv.KEY_LSHIFT, GameEnv.KEY_RSHIFT) 
+        },
+        alt_z   = { 
+            key = GameEnv.KEY_Z,   
+            mods = SafeMods(GameEnv.KEY_ALT, GameEnv.KEY_LALT, GameEnv.KEY_RALT) 
+        },
+        f10     = { 
+            key = GameEnv.KEY_F10, 
+            mods = {} 
+        },
     }
 
-    active_settings_bind = SETTINGS_MENU_BINDS[settings_bind] or SETTINGS_MENU_BINDS["ctrl_z"]
+    local bind_key = type(settings_bind) == "string" and settings_bind or "ctrl_z"
+    active_settings_bind = SETTINGS_MENU_BINDS[bind_key] or SETTINGS_MENU_BINDS["ctrl_z"]
 
     InputController.RegisterHandlers()
 end
@@ -35,7 +52,7 @@ end
 local function IsHUDActive()
     if not GameEnv.ThePlayer then return false end
     local screen = GameEnv.TheFrontEnd and GameEnv.TheFrontEnd:GetActiveScreen()
-    return screen and screen.name == "HUD"
+    return screen and type(screen) == "table" and screen.name == "HUD"
 end
 
 local function HasValidModifier()
