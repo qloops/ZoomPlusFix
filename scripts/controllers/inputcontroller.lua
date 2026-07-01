@@ -7,17 +7,13 @@ local GameEnv = nil
 local active_settings_bind = nil
 local on_settings_saved_cb = nil
 
-local function SafeMods(...)
-    local valid_mods = {}
-    for _, key_val in ipairs({...}) do
-        if key_val ~= nil then
-            table.insert(valid_mods, key_val)
-        end
-    end
-    return valid_mods
-end
-
-function InputController.Initialize(config_state, camera_controller, game_env, settings_bind, on_saved_callback)
+function InputController.Initialize(
+    config_state, 
+    camera_controller, 
+    game_env, 
+    settings_bind, 
+    on_saved_callback
+)
     cached_config = config_state.Settings
     cached_defaults = config_state.DefaultSettings
     CamController = camera_controller
@@ -25,26 +21,31 @@ function InputController.Initialize(config_state, camera_controller, game_env, s
     on_settings_saved_cb = on_saved_callback
 
     local SETTINGS_MENU_BINDS = {
-        ctrl_z  = { 
+        ctrl_z = { 
             key = GameEnv.KEY_Z,   
-            mods = SafeMods(GameEnv.KEY_CTRL, GameEnv.KEY_LCTRL, GameEnv.KEY_RCTRL, GameEnv.KEY_LSUPER, GameEnv.KEY_RSUPER) 
+            mods = { GameEnv.KEY_CTRL, GameEnv.KEY_LCTRL, GameEnv.KEY_RCTRL }
         },
         shift_z = { 
             key = GameEnv.KEY_Z,   
-            mods = SafeMods(GameEnv.KEY_SHIFT, GameEnv.KEY_LSHIFT, GameEnv.KEY_RSHIFT) 
+            mods = { GameEnv.KEY_SHIFT, GameEnv.KEY_LSHIFT, GameEnv.KEY_RSHIFT }
         },
-        alt_z   = { 
+        alt_z = { 
             key = GameEnv.KEY_Z,   
-            mods = SafeMods(GameEnv.KEY_ALT, GameEnv.KEY_LALT, GameEnv.KEY_RALT) 
+            mods = { GameEnv.KEY_ALT, GameEnv.KEY_LALT, GameEnv.KEY_RALT }
         },
-        f10     = { 
+        f10 = { 
             key = GameEnv.KEY_F10, 
-            mods = {} 
+            mods = {} -- No modifiers required; empty array for consistency.
         },
     }
 
     local bind_key = type(settings_bind) == "string" and settings_bind or "ctrl_z"
-    active_settings_bind = SETTINGS_MENU_BINDS[bind_key] or SETTINGS_MENU_BINDS["ctrl_z"]
+    if bind_key ~= "none" then
+        active_settings_bind = SETTINGS_MENU_BINDS[bind_key] 
+        or SETTINGS_MENU_BINDS["ctrl_z"]
+    else
+        active_settings_bind = nil
+    end
 
     InputController.RegisterHandlers()
 end
@@ -67,7 +68,7 @@ end
 
 local function OpenSettingsMenu()
     if not IsHUDActive() then return end
-    
+    -- Lazy-load screen to avoid loading UI widgets until actually needed.
     local ZoomSettingsScreen = require("screens/zoomsettingsscreen")
     
     GameEnv.TheFrontEnd:PushScreen(ZoomSettingsScreen(
@@ -78,11 +79,13 @@ local function OpenSettingsMenu()
 end
 
 function InputController.RegisterHandlers()
-    GameEnv.TheInput:AddKeyDownHandler(active_settings_bind.key, function()
-        if HasValidModifier() and IsHUDActive() then
-            OpenSettingsMenu()
-        end
-    end)
+    if active_settings_bind then
+        GameEnv.TheInput:AddKeyDownHandler(active_settings_bind.key, function()
+            if HasValidModifier() and IsHUDActive() then
+                OpenSettingsMenu()
+            end
+        end)
+    end
 
     GameEnv.TheInput:AddKeyHandler(function(key, down)
         if not down or cached_config.reset_is_mouse then return end

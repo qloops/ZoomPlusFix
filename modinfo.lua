@@ -7,9 +7,8 @@ Controls:
 * Scroll — Zoom in/out
 * Ctrl+Z — Configure camera and keys]]
 author = "Karasik"
-version = "1.8.6"
+version = "1.9.0"
 api_version = 10
-forumthread = "" -- only steam
 
 icon_atlas = "modicon.xml"
 icon = "modicon.tex"
@@ -20,7 +19,7 @@ shipwrecked_compatible = false
 hamlet_compatible = false
 dst_compatible = true
 
-priority = 0
+-- priority = 0
 
 all_clients_require_mod = false
 client_only_mod = true
@@ -36,6 +35,16 @@ configuration_options =
             {description = "On", data = true},
         },
         default = false,
+    },
+    {
+        name = "canopy_enabled",
+        label = "Display Canopy",
+        hover = "Display leaves at the edge of the screen when under Knobbly Trees", 
+        options = {
+            {description = "Off", data = false},
+            {description = "On", data = true},
+        },
+        default = true,
     },
     {
         name = "zoom_sensitivity",
@@ -64,6 +73,7 @@ configuration_options =
             {description = "Shift+Z", data = "shift_z"},
             {description = "Alt+Z", data = "alt_z"},
             {description = "F10", data = "f10"},
+            {description = "Disabled", data = "none"},
         },
         default = "ctrl_z",
     },
