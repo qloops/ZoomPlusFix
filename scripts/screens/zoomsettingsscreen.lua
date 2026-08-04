@@ -1,10 +1,5 @@
---[[
-I'm no Lua or modding expert, so I've likely missed some best practices here. 
-This code needs a thorough review by experienced developers (or by myself 
-later, once I learn the ropes better).
---]]
-
 local GLOBAL = _G
+
 local Screen = require("widgets/screen")
 local Widget = require("widgets/widget")
 local Text = require("widgets/text")
@@ -232,6 +227,8 @@ local ZoomSettingsScreen = Class(Screen, function(self, app_config, default_conf
         { id = "default_fov", label = "Default FOV", type = "STEPPER", step = 1, decimals = 0 },
         { id = "max_fov", label = "Max FOV", type = "STEPPER", step = 1, decimals = 0 },
         { id = "pitch_speed", label = "Pitch Speed", type = "STEPPER", step = 0.01, decimals = 2 },
+        { id = "reset_dist_surface", label = "Reset Dist Surface", type = "STEPPER", step = 1, decimals = 0 },
+        { id = "reset_dist_cave", label = "Reset Dist Cave", type = "STEPPER", step = 1, decimals = 0 },
     }
 
     self.panel_h = (#self.config_schema * LAYOUT.ROW_SPACING) + LAYOUT.PANEL_BASE_HEIGHT

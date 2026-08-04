@@ -1,9 +1,6 @@
 local ConfigState = {}
 
 ConfigState.CONSTANTS = {
-    RESET_DIST_SURFACE = 30,
-    RESET_DIST_CAVE = 25,
-
     BASE_PITCH_POWER = 0.5,
     MIN_PITCH_POWER = 0.01,
 }
@@ -20,6 +17,8 @@ ConfigState.DefaultSettings = {
     max_fov = 70,
     pitch_speed = 0.00,
     zoom_sensitivity = 4,
+    reset_dist_surface = 30,
+    reset_dist_cave = 25,
 }
 
 ConfigState.Settings = {}

@@ -73,8 +73,8 @@ function CameraController.ResetCamera()
     local is_cave = IsCave()
 
     GameEnv.TheCamera.distancetarget = is_cave 
-    and cached_constants.RESET_DIST_CAVE 
-    or cached_constants.RESET_DIST_SURFACE
+    and cached_config.reset_dist_cave 
+    or cached_config.reset_dist_surface
 end
 
 function CameraController.HookCamera(inst)

@@ -7,7 +7,7 @@ Controls:
 * Scroll — Zoom in/out
 * Ctrl+Z — Configure camera and keys]]
 author = "Karasik"
-version = "1.9.0"
+version = "1.10.0"
 api_version = 10
 
 icon_atlas = "modicon.xml"

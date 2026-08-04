@@ -68,7 +68,6 @@ end
 
 local function OpenSettingsMenu()
     if not IsHUDActive() then return end
-    -- Lazy-load screen to avoid loading UI widgets until actually needed.
     local ZoomSettingsScreen = require("screens/zoomsettingsscreen")
     
     GameEnv.TheFrontEnd:PushScreen(ZoomSettingsScreen(

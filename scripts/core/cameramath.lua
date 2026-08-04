@@ -3,8 +3,6 @@ local CameraMath = {}
 local math_max = math.max
 local math_min = math.min
 
--- Skipping extra checks (division by zero, incompatible parameters)
--- to boost performance; missing checks won't cause crashes.
 function CameraMath.CalculateCameraValues(
     distance, mindist, dist_range, 
     pitch_power, mindistpitch, pitch_range, 
